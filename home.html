@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Finder - Home</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Navigation Bar */
+        nav {
+            width: 100%;
+            background: #007bff;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 90%;
+            display: grid;
+            grid-template-columns: 1fr 250px; /* Main content and Sidebar for Ads */
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        h1 { color: #333; }
+
+        .search-box {
+            width: 80%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus { border-color: #007bff; }
+
+        .btn-search {
+            padding: 15px 30px;
+            margin-top: 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Recommendation Result */
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+        }
+
+        .ai-card {
+            background: #e7f3ff;
+            border: 1px solid #b3d7ff;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        /* Ad Slots */
+        .ad-slot {
+            background: #e0e0e0;
+            border: 2px dashed #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-size: 14px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .sidebar-ad { height: 400px; }
+        .bottom-ad { width: 100%; height: 100px; margin-top: 20px; }
+
+    </style>
+</head>
+<body>
+
+    <nav>AI RECOMMENDATION ENGINE</nav>
+
+    <div class="container">
+        <main class="search-section">
+            <h1>What do you want to do?</h1>
+            <p>Type your task (e.g., "Write an essay" or "Generate an image")</p>
+            
+            <input type="text" id="userPrompt" class="search-box" placeholder="Ask me anything...">
+            <br>
+            <button class="btn-search" onclick="recommendAI()">Find Best AI</button>
+
+            <div id="result">
+                <h3>Recommended AI:</h3>
+                <div id="aiDetails" class="ai-card"></div>
+            </div>
+        </main>
+
+        <aside class="ad-slot sidebar-ad">
+            ADVERTISEMENT SLOT <br> (Company Ads Here)
+        </aside>
+    </div>
+
+    <div class="container">
+        <div class="ad-slot bottom-ad">
+            HORIZONTAL BANNER AD SLOT
+        </div>
+    </div>
+
+    <script>
+        const aiDirectory = [
+            { keywords: ['write', 'essay', 'text', 'email', 'story'], name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'Best for creative writing and general questions.' },
+            { keywords: ['image', 'draw', 'picture', 'art', 'photo'], name: 'Midjourney / DALL-E', url: 'https://www.midjourney.com', desc: 'Best for generating high-quality AI art.' },
+            { keywords: ['code', 'python', 'javascript', 'html', 'program'], name: 'GitHub Copilot', url: 'https://github.com/features/copilot', desc: 'The best assistant for programmers.' },
+            { keywords: ['research', 'fact', 'search', 'source'], name: 'Perplexity AI', url: 'https://www.perplexity.ai', desc: 'Best for real-time research with citations.' }
+        ];
+
+        function recommendAI() {
+            const prompt = document.getElementById('userPrompt').value.toLowerCase();
+            const resultDiv = document.getElementById('result');
+            const detailsDiv = document.getElementById('aiDetails');
+
+            if (!prompt) return;
+
+            // Find matching AI
+            let match = aiDirectory.find(ai => 
+                ai.keywords.some(keyword => prompt.includes(keyword))
+            );
+
+            // Default if no keyword matches
+            if (!match) {
+                match = { name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'General purpose AI for most tasks.' };
+            }
+
+            // Display Result
+            resultDiv.style.display = 'block';
+            detailsDiv.innerHTML = `
+                <strong>${match.name}</strong><br>
+                <p>${match.desc}</p>
+                <a href="${match.url}" target="_blank" style="color: #007bff; font-weight: bold;">Visit ${match.name} →</a>
+            `;
+        }
+    </script>
+</body>
+</html>
