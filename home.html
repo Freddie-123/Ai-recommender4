@@ -29,12 +29,11 @@
             max-width: 1000px;
             width: 90%;
             display: grid;
-            grid-template-columns: 1fr 250px; /* Main content and Sidebar for Ads */
+            grid-template-columns: 1fr 250px;
             gap: 20px;
             margin-top: 30px;
         }
 
-        /* Search Section */
         .search-section {
             background: white;
             padding: 40px;
@@ -43,62 +42,93 @@
             text-align: center;
         }
 
-        h1 { color: #333; }
+        h1 { color: #333; margin-bottom: 10px; }
 
         .search-box {
-            width: 80%;
+            width: 85%;
             padding: 15px;
             font-size: 16px;
             border: 2px solid #ddd;
             border-radius: 30px;
             outline: none;
-            transition: border-color 0.3s;
+            margin-bottom: 20px;
         }
 
-        .search-box:focus { border-color: #007bff; }
+        /* --- TOGGLE SLIDER STYLES --- */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
 
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px; width: 22px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(30px); }
+
+        .label-text { font-size: 14px; color: #555; }
+        .active-label { color: #007bff; }
+
+        /* --- BUTTONS & RESULTS --- */
         .btn-search {
-            padding: 15px 30px;
-            margin-top: 15px;
+            padding: 15px 40px;
             background: #007bff;
             color: white;
             border: none;
             border-radius: 30px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: bold;
         }
 
-        /* Recommendation Result */
-        #result {
-            margin-top: 30px;
+        #result { margin-top: 30px; display: none; }
+        .ai-card {
+            background: #f8f9fa;
+            border-left: 5px solid #007bff;
             padding: 20px;
             border-radius: 8px;
-            display: none; /* Hidden by default */
-        }
-
-        .ai-card {
-            background: #e7f3ff;
-            border: 1px solid #b3d7ff;
-            padding: 15px;
-            border-radius: 8px;
+            text-align: left;
         }
 
         /* Ad Slots */
         .ad-slot {
-            background: #e0e0e0;
-            border: 2px dashed #bbb;
+            background: #e9ecef;
+            border: 2px dashed #adb5bd;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #777;
-            font-size: 14px;
-            text-align: center;
-            padding: 10px;
+            color: #6c757d;
+            height: 400px;
         }
-
-        .sidebar-ad { height: 400px; }
-        .bottom-ad { width: 100%; height: 100px; margin-top: 20px; }
-
     </style>
 </head>
 <body>
@@ -108,60 +138,74 @@
     <div class="container">
         <main class="search-section">
             <h1>What do you want to do?</h1>
-            <p>Type your task (e.g., "Write an essay" or "Generate an image")</p>
             
-            <input type="text" id="userPrompt" class="search-box" placeholder="Ask me anything...">
-            <br>
+            <input type="text" id="userPrompt" class="search-box" placeholder="e.g. Write a story about space...">
+
+            <div class="toggle-container">
+                <span class="label-text">FREE</span>
+                <label class="switch">
+                    <input type="checkbox" id="pricingToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="label-text">PAID / PREMIUM</span>
+            </div>
+
             <button class="btn-search" onclick="recommendAI()">Find Best AI</button>
 
             <div id="result">
-                <h3>Recommended AI:</h3>
+                <h3>Our Recommendation:</h3>
                 <div id="aiDetails" class="ai-card"></div>
             </div>
         </main>
 
-        <aside class="ad-slot sidebar-ad">
-            ADVERTISEMENT SLOT <br> (Company Ads Here)
+        <aside class="ad-slot">
+            AD SLOT
         </aside>
-    </div>
-
-    <div class="container">
-        <div class="ad-slot bottom-ad">
-            HORIZONTAL BANNER AD SLOT
-        </div>
     </div>
 
     <script>
         const aiDirectory = [
-            { keywords: ['write', 'essay', 'text', 'email', 'story'], name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'Best for creative writing and general questions.' },
-            { keywords: ['image', 'draw', 'picture', 'art', 'photo'], name: 'Midjourney / DALL-E', url: 'https://www.midjourney.com', desc: 'Best for generating high-quality AI art.' },
-            { keywords: ['code', 'python', 'javascript', 'html', 'program'], name: 'GitHub Copilot', url: 'https://github.com/features/copilot', desc: 'The best assistant for programmers.' },
-            { keywords: ['research', 'fact', 'search', 'source'], name: 'Perplexity AI', url: 'https://www.perplexity.ai', desc: 'Best for real-time research with citations.' }
+            // WRITING
+            { keywords: ['write', 'essay', 'text', 'email'], type: 'free', name: 'ChatGPT (Free)', url: 'https://chatgpt.com', desc: 'The world\'s most popular free AI for writing.' },
+            { keywords: ['write', 'essay', 'text', 'email'], type: 'paid', name: 'Claude 3.5 Sonnet', url: 'https://claude.ai', desc: 'Premium writing AI known for its human-like tone and accuracy.' },
+            
+            // IMAGES
+            { keywords: ['image', 'draw', 'picture', 'art'], type: 'free', name: 'Bing Image Creator', url: 'https://www.bing.com/images/create', desc: 'Free high-quality images powered by DALL-E 3.' },
+            { keywords: ['image', 'draw', 'picture', 'art'], type: 'paid', name: 'Midjourney', url: 'https://www.midjourney.com', desc: 'The gold standard for professional AI art generation.' },
+
+            // CODING
+            { keywords: ['code', 'python', 'html', 'js'], type: 'free', name: 'Blackbox AI', url: 'https://www.blackbox.ai', desc: 'Great free tool for quick code snippets.' },
+            { keywords: ['code', 'python', 'html', 'js'], type: 'paid', name: 'GitHub Copilot', url: 'https://github.com/features/copilot', desc: 'Professional level coding assistant for developers.' }
         ];
 
         function recommendAI() {
             const prompt = document.getElementById('userPrompt').value.toLowerCase();
+            const isPaid = document.getElementById('pricingToggle').checked;
+            const targetType = isPaid ? 'paid' : 'free';
+            
             const resultDiv = document.getElementById('result');
             const detailsDiv = document.getElementById('aiDetails');
 
             if (!prompt) return;
 
-            // Find matching AI
+            // Search for matches based on keywords AND the toggle state (free/paid)
             let match = aiDirectory.find(ai => 
-                ai.keywords.some(keyword => prompt.includes(keyword))
+                ai.type === targetType && ai.keywords.some(k => prompt.includes(k))
             );
 
-            // Default if no keyword matches
+            // Default fallback if no keyword matches
             if (!match) {
-                match = { name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'General purpose AI for most tasks.' };
+                match = isPaid ? 
+                    { name: 'ChatGPT Plus', url: 'https://chat.openai.com', desc: 'General premium AI for any advanced task.' } :
+                    { name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'Reliable free AI for everyday help.' };
             }
 
-            // Display Result
             resultDiv.style.display = 'block';
             detailsDiv.innerHTML = `
-                <strong>${match.name}</strong><br>
+                <span style="background:#28a745; color:white; padding:3px 8px; border-radius:5px; font-size:12px;">${match.type.toUpperCase()}</span>
+                <h2 style="margin: 10px 0;">${match.name}</h2>
                 <p>${match.desc}</p>
-                <a href="${match.url}" target="_blank" style="color: #007bff; font-weight: bold;">Visit ${match.name} →</a>
+                <a href="${match.url}" target="_blank" style="color: #007bff; text-decoration:none; font-weight:bold;">Try it now →</a>
             `;
         }
     </script>
