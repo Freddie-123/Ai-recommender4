@@ -96,7 +96,6 @@
         input:checked + .slider:before { transform: translateX(30px); }
 
         .label-text { font-size: 14px; color: #555; }
-        .active-label { color: #007bff; }
 
         /* --- BUTTONS & RESULTS --- */
         .btn-search {
@@ -139,7 +138,7 @@
         <main class="search-section">
             <h1>What do you want to do?</h1>
             
-            <input type="text" id="userPrompt" class="search-box" placeholder="e.g. Write a story about space...">
+            <input type="text" id="userPrompt" class="search-box" placeholder="e.g. Summarize this article or Research AI trends...">
 
             <div class="toggle-container">
                 <span class="label-text">FREE</span>
@@ -166,16 +165,24 @@
     <script>
         const aiDirectory = [
             // WRITING
-            { keywords: ['write', 'essay', 'text', 'email'], type: 'free', name: 'ChatGPT (Free)', url: 'https://chatgpt.com', desc: 'The world\'s most popular free AI for writing.' },
-            { keywords: ['write', 'essay', 'text', 'email'], type: 'paid', name: 'Claude 3.5 Sonnet', url: 'https://claude.ai', desc: 'Premium writing AI known for its human-like tone and accuracy.' },
+            { keywords: ['write', 'essay', 'text', 'email', 'story'], type: 'free', name: 'ChatGPT (Free)', url: 'https://chatgpt.com', desc: 'Fast and reliable for general writing tasks.' },
+            { keywords: ['write', 'essay', 'text', 'email', 'story'], type: 'paid', name: 'Claude 3.5 Sonnet', url: 'https://claude.ai', desc: 'Highly sophisticated writing with a natural human feel.' },
             
+            // SUMMARIZING
+            { keywords: ['summarize', 'summary', 'shorten', 'tl;dr', 'bullet points'], type: 'free', name: 'Humata AI', url: 'https://www.humata.ai', desc: 'Great for summarizing PDFs and long documents for free.' },
+            { keywords: ['summarize', 'summary', 'shorten', 'tl;dr', 'bullet points'], type: 'paid', name: 'ChatPDF (Pro)', url: 'https://www.chatpdf.com', desc: 'Premium analysis of massive documents and entire books.' },
+
+            // RESEARCH
+            { keywords: ['research', 'find', 'facts', 'search', 'study', 'sources'], type: 'free', name: 'Perplexity AI', url: 'https://www.perplexity.ai', desc: 'A search engine replacement that gives you direct answers with links to sources.' },
+            { keywords: ['research', 'find', 'facts', 'search', 'study', 'sources'], type: 'paid', name: 'Perplexity Pro', url: 'https://www.perplexity.ai/pro', desc: 'Access to advanced models (GPT-4o/Claude 3) for deep research and file uploads.' },
+
             // IMAGES
-            { keywords: ['image', 'draw', 'picture', 'art'], type: 'free', name: 'Bing Image Creator', url: 'https://www.bing.com/images/create', desc: 'Free high-quality images powered by DALL-E 3.' },
-            { keywords: ['image', 'draw', 'picture', 'art'], type: 'paid', name: 'Midjourney', url: 'https://www.midjourney.com', desc: 'The gold standard for professional AI art generation.' },
+            { keywords: ['image', 'draw', 'picture', 'art', 'logo'], type: 'free', name: 'Bing Image Creator', url: 'https://www.bing.com/images/create', desc: 'Free high-quality images powered by DALL-E 3.' },
+            { keywords: ['image', 'draw', 'picture', 'art', 'logo'], type: 'paid', name: 'Midjourney', url: 'https://www.midjourney.com', desc: 'Professional AI art with the highest resolution and detail.' },
 
             // CODING
-            { keywords: ['code', 'python', 'html', 'js'], type: 'free', name: 'Blackbox AI', url: 'https://www.blackbox.ai', desc: 'Great free tool for quick code snippets.' },
-            { keywords: ['code', 'python', 'html', 'js'], type: 'paid', name: 'GitHub Copilot', url: 'https://github.com/features/copilot', desc: 'Professional level coding assistant for developers.' }
+            { keywords: ['code', 'python', 'html', 'js', 'programming'], type: 'free', name: 'Blackbox AI', url: 'https://www.blackbox.ai', desc: 'Excellent for quick coding help and extracting code from videos.' },
+            { keywords: ['code', 'python', 'html', 'js', 'programming'], type: 'paid', name: 'GitHub Copilot', url: 'https://github.com/features/copilot', desc: 'Integrates directly into your code editor for professional work.' }
         ];
 
         function recommendAI() {
@@ -196,16 +203,16 @@
             // Default fallback if no keyword matches
             if (!match) {
                 match = isPaid ? 
-                    { name: 'ChatGPT Plus', url: 'https://chat.openai.com', desc: 'General premium AI for any advanced task.' } :
-                    { name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'Reliable free AI for everyday help.' };
+                    { name: 'ChatGPT Plus', url: 'https://chat.openai.com', desc: 'The most powerful all-around premium AI tool.' } :
+                    { name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'The best free starting point for any AI task.' };
             }
 
             resultDiv.style.display = 'block';
             detailsDiv.innerHTML = `
-                <span style="background:#28a745; color:white; padding:3px 8px; border-radius:5px; font-size:12px;">${match.type.toUpperCase()}</span>
+                <span style="background:${match.type === 'paid' ? '#28a745' : '#6c757d'}; color:white; padding:3px 8px; border-radius:5px; font-size:12px;">${match.type.toUpperCase()}</span>
                 <h2 style="margin: 10px 0;">${match.name}</h2>
                 <p>${match.desc}</p>
-                <a href="${match.url}" target="_blank" style="color: #007bff; text-decoration:none; font-weight:bold;">Try it now →</a>
+                <a href="${match.url}" target="_blank" style="color: #007bff; text-decoration:none; font-weight:bold;">Open ${match.name} →</a>
             `;
         }
     </script>
